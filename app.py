@@ -1326,6 +1326,86 @@ def delete_language(language_id):
 
     return redirect(url_for('update_profile'))
 
+# CHECK CANDIDATE % PROFILE 
+@app.route('/candidate/profile-completion', methods=['GET'])
+@login_required
+def profile_completion():
+    candidate_id = session.get('candidate_key')
+    
+    connection = pymysql.connect(**db_config)
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    
+    cursor.execute("SELECT * FROM candidates WHERE id = %s", (candidate_id,))
+    candidate = cursor.fetchone()
+    
+    if not candidate:
+        return jsonify({
+            'completion_percentage': 0
+        })
+    
+    required_fields = [
+        'email', 'fname', 'lname', 'surname', 'phone', 'profile_pic',
+        'professional_title', 'gender', 'dob', 'national_id_no',
+        'address', 'bio', 'country_id'
+    ]
+
+    # Print the fetched candidate data
+    # print(f"Candidate Data: {candidate}")
+
+    # Initialize completion count
+    completed_fields = 0
+    for field in required_fields:
+        field_value = candidate.get(field)
+        print(f"Field {field}: {field_value}")  # Debug print for each field
+        if field_value:
+            completed_fields += 1
+
+    # print(f"Completed Fields from Profile: {completed_fields} / {len(required_fields)}")
+
+    # Check for work experience, certifications, technical skills, soft skills, and languages
+    cursor.execute("SELECT COUNT(*) as count FROM workexperiences WHERE candidate_id = %s", (candidate_id,))
+    work_experience_count = cursor.fetchone()['count']
+    if work_experience_count > 0:
+        completed_fields += 1
+        # print("Work experience is completed")
+
+    cursor.execute("SELECT COUNT(*) as count FROM certifications WHERE candidate_id = %s", (candidate_id,))
+    certification_count = cursor.fetchone()['count']
+    if certification_count > 0:
+        completed_fields += 1
+        # print("Certifications are completed")
+
+    cursor.execute("SELECT COUNT(*) as count FROM candidates_technicalskills WHERE candidate_id = %s", (candidate_id,))
+    technical_skill_count = cursor.fetchone()['count']
+    if technical_skill_count > 0:
+        completed_fields += 1
+        # print("Technical skills are completed")
+
+    cursor.execute("SELECT COUNT(*) as count FROM candidates_softskills WHERE candidate_id = %s", (candidate_id,))
+    soft_skill_count = cursor.fetchone()['count']
+    if soft_skill_count > 0:
+        completed_fields += 1
+        # print("Soft skills are completed")
+
+    cursor.execute("SELECT COUNT(*) as count FROM candidates_languages WHERE candidate_id = %s", (candidate_id,))
+    language_count = cursor.fetchone()['count']
+    if language_count > 0:
+        completed_fields += 1
+        # print("Languages are completed")
+
+    total_fields = len(required_fields) + 5  # +5 for work experience, certifications, technical skills, soft skills, and languages
+    completion_percentage = (completed_fields / total_fields) * 100
+    
+    # print(f"Total Completed Fields: {completed_fields} / {total_fields}")
+    # print(f"Completion Percentage: {completion_percentage}%")
+    
+    connection.close()
+    
+    return jsonify({
+        'completion_percentage': completion_percentage
+    })
+
+
 
 if __name__ == '__main__':
     app.debug = True

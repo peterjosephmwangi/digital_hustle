@@ -43,6 +43,26 @@
         background-color: #0056b3; /* Active page number color */
         color: white;
     }
+
+    /* candidate completion indicators  */
+    .completion-message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: none;
+        }
+        .completion-low {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .completion-medium {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .completion-high {
+            background-color: #d4edda;
+            color: #155724;
+        }
 </style>
 <div class="page-own-content">
     <div class="page-row">
@@ -72,16 +92,24 @@
 
     <div class="profile-bio-container">
         <div class="profile-bio-wrapper">
-            <div class="profile-image-box d-flex justify-content-start  align-items-center ">
+            <div class="profile-image-box d-flex justify-content-start  align-items-center " >
+                
                 <div class="profile-image">
                     <img src="{{ url_for('static', filename='/candidate_profile_pics/' + profile.profile_pic) }}" alt="Profile Picture" class="profile-img" style="width: 100px;height: 100px;">
                    
                 </div>
+
+               
               
                 <div class="d-flex justify-content-end align-items-center ms-3">
-                    <a href="/candidate/upload-photo" class="btn btn-primary">
+                    <a href="/candidate/upload-photo" class="btn btn-primary" style="width: max-content;">
                         <i class="las la-edit me-2"></i>Change photo
                     </a>
+                </div>
+                 <!-- Profile Completion Display -->
+                 <div class="container d-flex justify-content-end align-items-center m-3">
+                    <div id="completion-message" class="completion-message" style="width: max-content; align-self: flex-end;"></div>
+                    <!-- Other profile elements go here -->
                 </div>
             </div>
             <div class="profile-bio">
@@ -724,6 +752,28 @@ document.querySelectorAll('.delete-skill, .delete-softskill, .delete-language', 
 });
 
 
+
+$(document).ready(function() {
+            $.ajax({
+                url: '/candidate/profile-completion',
+                method: 'GET',
+                success: function(response) {
+                    const completionPercentage = response.completion_percentage;
+                    const completionMessage = $('#completion-message');
+                    let messageText = `Profile Completion: ${completionPercentage.toFixed(2)}%`;
+
+                    if (completionPercentage < 50) {
+                        completionMessage.addClass('completion-low');
+                    } else if (completionPercentage < 75) {
+                        completionMessage.addClass('completion-medium');
+                    } else {
+                        completionMessage.addClass('completion-high');
+                    }
+
+                    completionMessage.text(messageText).show();
+                }
+            });
+        });
 
 
 
