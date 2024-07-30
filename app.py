@@ -75,9 +75,14 @@ def home():
     total_pages = (total_records + 4) // 5  # Calculate total pages (5 items per page)
     featured_jobs = get_featured_jobs()
     return render_template('home.html', locations=locations, jobtypes=jobType, salaryranges=salaryRange, categories=categories, companies=companies, total_pages=total_pages, postedjobs = featured_jobs, candidates=candidates)
-# @app.route('/candidate/dashboard')
-# def candidate_dashboard():
-#     return render_template('candidate/dashboard.html')
+# CANDIDATE APPLICATIONS 
+@app.route('/candidate/applications')
+def candidate_applications():
+    return render_template('candidate/applications.html')
+# CANDIDATE SETTINGS
+@app.route('/candidate/settings')
+def candidate_settings():
+    return render_template('candidate/settings.html')
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -765,13 +770,147 @@ def candidate_profile():
                                soft_skills=candidate_info['soft_skills'],
                                languages=candidate_info['languages'],
                                work_experiences=candidate_info['work_experiences'],
-                               certifications=candidate_info['certifications'])
+                               certifications=candidate_info['certifications'],
+                               educations=candidate_info['educations']
+                               )
     except Exception as e:
         flash(f'An error occurred while fetching the profile: {str(e)}', 'danger')
         return redirect(url_for('home'))
     finally:
         connection.close()
+# GET TECHNICAL CANDIDATE SKILLS
+@app.route('/candidate/get-technical-skills', methods=['POST'])
+@login_required
+def get_technical_skills():
+    current_page = int(request.form['currentPage'])
+    items_per_page = int(request.form['itemsPerPage'])
+    candidate_id = session.get('candidate_key')
 
+    connection = pymysql.connect(**db_config)
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    # Fetch paginated technical skills
+    skills_sql = '''
+        SELECT skills.id, skills.skill_name 
+        FROM candidates_technicalskills 
+        JOIN skills ON candidates_technicalskills.skill_id = skills.id 
+        WHERE candidates_technicalskills.candidate_id=%s
+        LIMIT %s OFFSET %s
+    '''
+    cursor.execute(skills_sql, (candidate_id, items_per_page, (current_page - 1) * items_per_page))
+    technical_skills = cursor.fetchall()
+
+    # Fetch total count of technical skills
+    count_sql = 'SELECT COUNT(*) as total FROM candidates_technicalskills WHERE candidate_id=%s'
+    cursor.execute(count_sql, (candidate_id,))
+    total_technical_skills = cursor.fetchone()['total']
+    total_pages = (total_technical_skills + items_per_page - 1) // items_per_page
+
+    # Fetch unselected skills
+    unselected_skills = get_unselected_skills(cursor, candidate_id)
+
+    htmlresponse = ""
+    for skill in technical_skills:
+        htmlresponse += render_template('technical_skill_row.html', skill=skill)
+
+    connection.close()
+
+    return jsonify({
+        'htmlresponse': htmlresponse,
+        'currentPage': current_page,
+        'total': total_technical_skills,
+        'totalPages': total_pages,
+        'isEmpty': len(technical_skills) == 0,
+        'showPagination': total_technical_skills > items_per_page,
+        'unselectedSkills': unselected_skills
+    })
+
+# CANDIDATE SOFT SKILLS
+@app.route('/candidate/get-soft-skills', methods=['POST'])
+@login_required
+def get_soft_skills():
+    current_page = int(request.form['currentPage'])
+    items_per_page = int(request.form['itemsPerPage'])
+    candidate_id = session.get('candidate_key')
+
+    connection = pymysql.connect(**db_config)
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    # Fetch paginated soft skills
+    softskills_sql = '''
+        SELECT soft_skills.id, soft_skills.skill_name 
+        FROM candidates_softskills 
+        JOIN soft_skills ON candidates_softskills.softskill_id = soft_skills.id 
+        WHERE candidates_softskills.candidate_id=%s
+        LIMIT %s OFFSET %s
+    '''
+    cursor.execute(softskills_sql, (candidate_id, items_per_page, (current_page - 1) * items_per_page))
+    soft_skills = cursor.fetchall()
+
+    # Fetch total count of soft skills
+    count_sql = 'SELECT COUNT(*) as total FROM candidates_softskills WHERE candidate_id=%s'
+    cursor.execute(count_sql, (candidate_id,))
+    total_soft_skills = cursor.fetchone()['total']
+    total_pages = (total_soft_skills + items_per_page - 1) // items_per_page
+
+    # Fetch unselected soft skills
+    unselected_soft_skills = get_unselected_soft_skills(cursor, candidate_id)
+
+    htmlresponse = ""
+    for skill in soft_skills:
+        htmlresponse += render_template('soft_skill_row.html', skill=skill)
+
+    connection.close()
+
+    return jsonify({
+        'htmlresponse': htmlresponse,
+        'currentPage': current_page,
+        'total': total_soft_skills,
+        'totalPages': total_pages,
+        'isEmpty': len(soft_skills) == 0,
+        'showPagination': total_soft_skills > items_per_page,
+        'unselectedSoftSkills': unselected_soft_skills
+    })
+
+# LANGUAGES
+@app.route('/candidate/get-languages', methods=['POST'])
+@login_required
+def get_languages():
+    current_page = int(request.form['currentPage'])
+    items_per_page = int(request.form['itemsPerPage'])
+    candidate_id = session.get('candidate_key')
+
+    connection = pymysql.connect(**db_config)
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    sql = '''
+        SELECT languages.id, languages.language
+        FROM candidates_languages 
+        JOIN languages ON candidates_languages.language_id = languages.id 
+        WHERE candidates_languages.candidate_id=%s
+        LIMIT %s OFFSET %s
+    '''
+    cursor.execute(sql, (candidate_id, items_per_page, (current_page - 1) * items_per_page))
+    languages = cursor.fetchall()
+
+    cursor.execute("SELECT COUNT(*) as total FROM candidates_languages WHERE candidate_id = %s", (candidate_id,))
+    total_languages = cursor.fetchone()['total']
+    total_pages = (total_languages + items_per_page - 1) // items_per_page
+
+    htmlresponse = ""
+    for language in languages:
+        htmlresponse += render_template('language_row.html', language=language)
+
+    connection.close()
+
+    return jsonify({
+        'htmlresponse': htmlresponse,
+        'currentPage': current_page,
+        'total': total_languages,
+        'totalPages': total_pages,
+        'isEmpty': len(languages) == 0,
+        'showPagination': total_languages > items_per_page
+    })
 
 
 # EDIT CANDIDATE PROFILE 
@@ -1074,7 +1213,7 @@ def add_certification():
     else:
         return render_template('403.html')
     
-# GET CANDIDATE CERTIFICATIONS
+# # GET CANDIDATE CERTIFICATIONS
 @app.route('/candidate/get-certifications', methods=['POST'])
 @login_required
 def get_certifications():
@@ -1104,6 +1243,7 @@ def get_certifications():
         'totalPages': total_pages
     })
  
+
 
 # UPDATE CANDIDATE CERTIFICATION
 @app.route('/candidate/update-certifications', methods=['POST'])
@@ -1157,23 +1297,41 @@ def get_work_experience():
     connection = pymysql.connect(**db_config)
     cursor = connection.cursor(pymysql.cursors.DictCursor)
 
-    sql = "SELECT * FROM workexperiences WHERE candidate_id = %s LIMIT %s OFFSET %s"
-    cursor.execute(sql, (candidate_id, items_per_page, (current_page - 1) * items_per_page))
+    # Fetch paginated work experiences
+    work_experience_sql = '''
+        SELECT * 
+        FROM workexperiences 
+        WHERE candidate_id=%s
+        LIMIT %s OFFSET %s
+    '''
+    cursor.execute(work_experience_sql, (candidate_id, items_per_page, (current_page - 1) * items_per_page))
     work_experiences = cursor.fetchall()
+    # print(work_experiences)  # Debug print to check fetched data
 
-    cursor.execute("SELECT COUNT(*) as total FROM workexperiences WHERE candidate_id = %s", (candidate_id,))
+    # Fetch total count of work experiences
+    count_sql = 'SELECT COUNT(*) as total FROM workexperiences WHERE candidate_id=%s'
+    cursor.execute(count_sql, (candidate_id,))
     total_work_experiences = cursor.fetchone()['total']
     total_pages = (total_work_experiences + items_per_page - 1) // items_per_page
+    # print("My work experience are as", work_experiences)
+    # print("My work experience are as", total_pages)
+    # print("My work experience are as", total_work_experiences)
+
 
     htmlresponse = ""
-    for work_experience in work_experiences:
-        htmlresponse += render_template('work_experience_row.html', work_experience=work_experience)
+    for experience in work_experiences:
+        htmlresponse += render_template('work_experience_row.html', experience=experience)
+        # print("My work experience are as", experience)
+
+    connection.close()
 
     return jsonify({
         'htmlresponse': htmlresponse,
         'currentPage': current_page,
         'total': total_work_experiences,
-        'totalPages': total_pages
+        'totalPages': total_pages,
+        'isEmpty': len(work_experiences) == 0,
+        'showPagination': total_work_experiences > items_per_page
     })
 
 
@@ -1245,7 +1403,138 @@ def delete_work_experience(id):
     else:
         return render_template('403.html')
 
- 
+# GET CANDIDATE EDUCATION
+@app.route('/candidate/get-education', methods=['POST'])
+@login_required
+def get_education():
+    current_page = int(request.form['currentPage'])
+    items_per_page = int(request.form['itemsPerPage'])
+    candidate_id = session.get('candidate_key')
+
+    connection = pymysql.connect(**db_config)
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    # Fetch paginated education records
+    education_sql = '''
+        SELECT * 
+        FROM candidate_education 
+        WHERE candidate_id=%s
+        LIMIT %s OFFSET %s
+    '''
+    cursor.execute(education_sql, (candidate_id, items_per_page, (current_page - 1) * items_per_page))
+    education_records = cursor.fetchall()
+
+    # Fetch total count of education records
+    count_sql = 'SELECT COUNT(*) as total FROM candidate_education WHERE candidate_id=%s'
+    cursor.execute(count_sql, (candidate_id,))
+    total_education_records = cursor.fetchone()['total']
+    total_pages = (total_education_records + items_per_page - 1) // items_per_page
+
+    htmlresponse = ""
+    for education in education_records:
+        htmlresponse += render_template('education_row.html', education=education)
+
+    connection.close()
+
+    return jsonify({
+        'htmlresponse': htmlresponse,
+        'currentPage': current_page,
+        'total': total_education_records,
+        'totalPages': total_pages,
+        'isEmpty': len(education_records) == 0,
+        'showPagination': total_education_records > items_per_page
+    })
+
+# ADD CANDIDATE EDUCATION
+@app.route('/candidate/add-education', methods=['POST'])
+@login_required
+def add_education():
+    connection = pymysql.connect(**db_config)
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    if session.get('key') == "candidate":
+        if request.method == 'POST':
+            institution_name = request.form['institution_name']
+            degree = request.form['degree']
+            field_of_study = request.form['field_of_study']
+            education_level = request.form['education_level']
+            start_date = request.form['start_date']
+            end_date = request.form['end_date']
+            grade = request.form['grade']
+            description = request.form['description']
+
+            data = (session['candidate_key'], institution_name, degree, field_of_study, education_level, start_date, end_date, grade, description)
+            sql = '''
+                INSERT INTO candidate_education (candidate_id, institution_name, degree, field_of_study, education_level, start_date, end_date, grade, description)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            '''
+            cursor.execute(sql, data)
+            connection.commit()
+
+            flash('Education added successfully', 'success')
+            return redirect(url_for('update_profile'))
+
+    else:
+        return render_template('403.html')
+
+
+# UPDATE CANDIDATE EDUCATION
+@app.route('/candidate/update-education', methods=['POST'])
+@login_required
+def update_education():
+    connection = pymysql.connect(**db_config)
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    if session['key'] == "candidate":
+        if request.method == 'POST':
+            education_id = request.form['id']
+            institution_name = request.form['institution_name']
+            degree = request.form['degree']
+            field_of_study = request.form['field_of_study']
+            education_level = request.form['education_level']
+            start_date = request.form['start_date']
+            end_date = request.form['end_date']
+            grade = request.form['grade']
+            description = request.form['description']
+
+            data = (institution_name, degree, field_of_study, education_level, start_date, end_date, grade, description, education_id)
+            sql = """
+                UPDATE candidate_education
+                SET institution_name = %s,
+                    degree = %s,
+                    field_of_study = %s,
+                    education_level = %s,
+                    start_date = %s,
+                    end_date = %s,
+                    grade = %s,
+                    description = %s
+                WHERE id = %s AND candidate_id = %s
+            """
+            cursor.execute(sql, data + (session['candidate_key'],))
+            connection.commit()
+
+            flash('Education updated successfully', 'success')
+            return redirect(url_for('update_profile'))
+
+    else:
+        return render_template('403.html')
+    
+# DELETE CANDIDATE EDUCATION
+@app.route('/candidate/delete-education/<int:id>', methods=['POST'])
+@login_required
+def delete_education(id):
+    connection = pymysql.connect(**db_config)
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    if session['key'] == "candidate":
+        sql = "DELETE FROM candidate_education WHERE id = %s AND candidate_id = %s"
+        cursor.execute(sql, (id, session['candidate_key']))
+        connection.commit()
+        flash('Education record deleted successfully', 'success')
+        return redirect(url_for('update_profile'))
+    else:
+        return render_template('403.html')
+
+
+
+
 # DELETE CANDIDATE TECHNICAL SKILLS
 @app.route('/candidate/delete-skill/<int:skill_id>', methods=['POST'])
 @login_required
@@ -1356,7 +1645,7 @@ def profile_completion():
     completed_fields = 0
     for field in required_fields:
         field_value = candidate.get(field)
-        print(f"Field {field}: {field_value}")  # Debug print for each field
+        # print(f"Field {field}: {field_value}")  # Debug print for each field
         if field_value:
             completed_fields += 1
 
@@ -1374,6 +1663,12 @@ def profile_completion():
     if certification_count > 0:
         completed_fields += 1
         # print("Certifications are completed")
+
+    # Check Education
+    cursor.execute("SELECT COUNT(*) as count FROM candidate_education WHERE candidate_id = %s", (candidate_id,))
+    education_count = cursor.fetchone()['count']
+    if education_count > 0:
+        completed_fields += 1
 
     cursor.execute("SELECT COUNT(*) as count FROM candidates_technicalskills WHERE candidate_id = %s", (candidate_id,))
     technical_skill_count = cursor.fetchone()['count']

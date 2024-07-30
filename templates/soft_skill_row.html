@@ -1,0 +1,14 @@
+<tr data-id="{{ skill.id }}">
+  <td>{{ skill.skill_name }}</td>
+  <td>
+    <form
+      method="POST"
+      action="/candidate/delete-softskill/{{ skill.id }}"
+      style="display: inline"
+    >
+      <button class="btn btn-danger btn-sm delete-soft-skill" type="submit">
+        DELETE
+      </button>
+    </form>
+  </td>
+</tr>

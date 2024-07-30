@@ -1,0 +1,14 @@
+<tr data-id="{{ language.id }}">
+  <td>{{ language.language }}</td>
+  <td>
+    <form
+      method="POST"
+      action="/candidate/delete-language/{{ language.id }}"
+      style="display: inline"
+    >
+      <button class="btn btn-danger btn-sm delete-language" type="submit">
+        Delete
+      </button>
+    </form>
+  </td>
+</tr>

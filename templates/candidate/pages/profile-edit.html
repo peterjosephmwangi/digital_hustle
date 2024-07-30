@@ -237,116 +237,242 @@
             
             <!-- Tab Panes -->
             <div class="tab-content" id="myTabContent">
-             <!-- Technical Skills Tab -->
-<div class="tab-pane fade show active" id="technical-skills" role="tabpanel" aria-labelledby="technical-skills-tab">
-    <div class="d-flex justify-content-end align-items-center m-3">
-        <button class="btn btn-success" data-toggle="modal" data-target="#addTechnicalSkillModal">
-            <i class="las la-plus me-2"></i>Add
-        </button>
-    </div>
-    <table class="table table-bordered" id="technical-skills-table">
-        <thead>
-            <tr>
-                <th>Skill</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if skills %}
-                {% for skill in skills %}
-                    <tr data-id="{{ skill[0] }}">
-                        <td>{{ skill.skill_name }}</td>
-                        <td>
-                            <form method="POST" action="/candidate/delete-skill/{{ skill.id }}" style="display:inline;">
-                                <button class="btn btn-danger btn-sm delete-skill" type="submit">DELETE</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            {% else %}
-                <tr>
-                    <td colspan="2" class="text-center">No technical skills found.</td>
-                </tr>
-            {% endif %}
-        </tbody>
-    </table>
-</div>
+          
+                <!-- Technical Skills Tab -->
+                <div class="tab-pane fade show active" id="technical-skills" role="tabpanel" aria-labelledby="technical-skills-tab">
+                    <div class="d-flex justify-content-end align-items-center m-3">
+                        <button class="btn btn-success" data-toggle="modal" data-target="#addTechnicalSkillModal">
+                            <i class="las la-plus me-2"></i>Add
+                        </button>
+                    </div>
+                    <table class="table table-bordered" id="technical-skills-table">
+                        <thead>
+                            <tr>
+                                <th>Skill</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="technical-skills-tbody">
+                            <!-- Technical skills will be loaded here via JavaScript -->
+                        </tbody>
+                    </table>
+                    <div class="text-center text-muted" id="no-technical-skills-message" style="display: none;">
+                        No technical skills found.
+                    </div>
+                    <div class="pagination" id="technical-skills-pagination" style="display: none;">
+                        <button id="prev-technical-skills" class="btn btn-secondary" disabled>
+                            <i class="las la-chevron-left"></i> Previous
+                        </button>
+                        <span>Page <span id="current-page-display-technical-skills">1</span> of <span id="total-pages-display-technical-skills">1</span></span>
+                        <button id="next-technical-skills" class="btn btn-secondary" disabled>
+                            Next <i class="las la-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
 
-<!-- Soft Skills Tab -->
-<div class="tab-pane fade" id="soft-skills" role="tabpanel" aria-labelledby="soft-skills-tab">
-    <div class="d-flex justify-content-end align-items-center m-3">
-        <button class="btn btn-success" data-toggle="modal" data-target="#addSoftSkillModal">
-            <i class="las la-plus me-2"></i>Add
-        </button>
-    </div>
-    <table class="table table-bordered" id="soft-skills-table">
-        <thead>
-            <tr>
-                <th>Soft Skill</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if softskills %}
-                {% for softskill in softskills %}
-                    <tr data-id="{{ softskill[0] }}">
-                        <td>{{ softskill.skill_name }}</td>
-                        <td>
-                            <form method="POST" action="/candidate/delete-softskill/{{ softskill.id }}" style="display:inline;">
-                                <button class="btn btn-danger btn-sm delete-softskill" type="submit">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            {% else %}
-                <tr>
-                    <td colspan="2" class="text-center">No soft skills found.</td>
-                </tr>
-            {% endif %}
-        </tbody>
-    </table>
-</div>
+                <!-- Soft Skills Tab -->
 
-<!-- Languages Tab -->
-<div class="tab-pane fade" id="languages" role="tabpanel" aria-labelledby="languages-tab">
-    <div class="d-flex justify-content-end align-items-center m-3">
-        <button class="btn btn-success" data-toggle="modal" data-target="#addLanguageModal">
-            <i class="las la-plus me-2"></i>Add
-        </button>
-    </div>
-    <table class="table table-bordered" id="languages-table">
-        <thead>
-            <tr>
-                <th>Language</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if languages %}
-                {% for language in languages %}
-                    <tr data-id="{{ language[0] }}">
-                        <td>{{ language.language }}</td>
-                        <td>
-                            <form method="POST" action="/candidate/delete-language/{{ language.id }}" style="display:inline;">
-                                <button class="btn btn-danger btn-sm delete-language" type="submit">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            {% else %}
-                <tr>
-                    <td colspan="2" class="text-center">No languages found.</td>
-                </tr>
-            {% endif %}
-        </tbody>
-    </table>
-</div>
-
+                <div class="tab-pane fade" id="soft-skills" role="tabpanel" aria-labelledby="soft-skills-tab">
+                    <div class="d-flex justify-content-end align-items-center m-3">
+                        <button class="btn btn-success" data-toggle="modal" data-target="#addSoftSkillModal">
+                            <i class="las la-plus me-2"></i>Add
+                        </button>
+                    </div>
+                    <table class="table table-bordered" id="soft-skills-table">
+                        <thead>
+                            <tr>
+                                <th>Skill</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="soft-skills-tbody">
+                            <!-- Soft skills will be loaded here via JavaScript -->
+                        </tbody>
+                    </table>
+                    <div class="text-center text-muted" id="no-soft-skills-message" style="display: none;">
+                        No soft skills found.
+                    </div>
+                    <div class="pagination" id="soft-skills-pagination" style="display: none;">
+                        <button id="prev-soft-skills" class="btn btn-secondary" disabled>
+                            <i class="las la-chevron-left"></i> Previous
+                        </button>
+                        <span>Page <span id="current-page-display-soft-skills">1</span> of <span id="total-pages-display-soft-skills">1</span></span>
+                        <button id="next-soft-skills" class="btn btn-secondary" disabled>
+                            Next <i class="las la-chevron-right"></i>
+                        </button>
+                    </div>
+                
+                </div>
+                <!-- Languages Tab -->
+                <div class="tab-pane fade" id="languages" role="tabpanel" aria-labelledby="languages-tab">
+                    <div class="d-flex justify-content-end align-items-center m-3">
+                        <button class="btn btn-success" data-toggle="modal" data-target="#addLanguageModal">
+                            <i class="las la-plus me-2"></i>Add
+                        </button>
+                    </div>
+                    <table class="table table-bordered" id="languages-table">
+                        <thead>
+                            <tr>
+                                <th>Language</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="languages-tbody">
+                            <!-- Languages will be loaded here via JavaScript -->
+                        </tbody>
+                    </table>
+                    <div class="text-center text-muted" id="no-languages-message" style="display: none;">
+                        No languages found.
+                    </div>
+                    <div class="pagination" id="languages-pagination" style="display: none;">
+                        <button id="prev-languages" class="btn btn-secondary" disabled>
+                            <i class="las la-chevron-left"></i> Previous
+                        </button>
+                        <span>Page <span id="current-page-display-languages">1</span> of <span id="total-pages-display-languages">1</span></span>
+                        <button id="next-languages" class="btn btn-secondary" disabled>
+                            Next <i class="las la-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- CERTIFICATION AND WORK EXPERIENCE TABS -->
+
+<div class="profile-bio-container">
+    <div class="profile-bio-wrapper">
+        <div class="container">
+            <!-- Nav Tabs -->
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="certifications-tab" data-toggle="tab" href="#certifications" role="tab" aria-controls="certifications" aria-selected="true">Certifications</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="work-experience-tab" data-toggle="tab" href="#work-experience" role="tab" aria-controls="work-experience" aria-selected="false">Work Experience</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="education-tab" data-toggle="tab" href="#education" role="tab" aria-controls="education" aria-selected="false">Education</a>
+                </li>
+            </ul>
+            
+            <!-- Tab Panes -->
+            <div class="tab-content" id="myTabContent">
+                    <!-- Certifications Tab -->
+                    <div class="tab-pane fade show active" id="certifications" role="tabpanel" aria-labelledby="certifications-tab">
+                        <div class="d-flex justify-content-end align-items-center m-3">
+                            <button class="btn btn-success" data-toggle="modal" data-target="#addCertificationModal">
+                                <i class="las la-plus me-2"></i>Add 
+                            </button>
+                        </div>
+                        <table class="table table-bordered" id="certifications-table">
+                            <thead>
+                                <tr>
+                                    <th>Certification Name</th>
+                                    <th>Date Awarded</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="certifications-table-body">
+                                <!-- Dynamic content will be loaded here -->
+                            </tbody>
+                        </table>
+                        {% if certifications %}
+                            <div class="pagination">
+                                <button id="prev-certifications" class="btn btn-secondary">
+                                    <i class="las la-chevron-left"></i> Previous
+                                </button>
+                                <span>Page <span class="page-number" id="current-page-display-certifications">1</span> of <span class="page-number" id="total-pages-display-certifications">1</span></span>
+                                <button id="next-certifications" class="btn btn-secondary">
+                                    Next <i class="las la-chevron-right"></i>
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <!-- Work Experience Tab -->
+                    <div class="tab-pane fade" id="work-experience" role="tabpanel" aria-labelledby="work-experience-tab">
+                        <div class="d-flex justify-content-end align-items-center m-3">
+                            <button class="btn btn-success" data-toggle="modal" data-target="#addWorkExperienceModal">
+                                <i class="las la-plus me-2"></i>Add
+                            </button>
+                        </div>
+                        <table class="table table-bordered" id="work-experience-table">
+                            <thead>
+                                <tr>
+                                    <th>Company Name</th>
+                                    <th>Job Title</th>
+                                    <th>From Date</th>
+                                    <th>To Date</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="work-experience-tbody">
+                                <!-- Work experiences will be loaded here via JavaScript -->
+                            </tbody>
+                        </table>
+                        <div class="text-center text-muted" id="no-work-experience-message" style="display: none;">
+                            No work experience found.
+                        </div>
+                        <div class="pagination" id="work-experience-pagination" style="display: none;">
+                            <button id="prev-work-experience" class="btn btn-secondary" disabled>
+                                <i class="las la-chevron-left"></i> Previous
+                            </button>
+                            <span>Page <span id="current-page-display-work-experience">1</span> of <span id="total-pages-display-work-experience">1</span></span>
+                            <button id="next-work-experience" class="btn btn-secondary" disabled>
+                                Next <i class="las la-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Education Tab -->
+                    <div class="tab-pane fade" id="education" role="tabpanel" aria-labelledby="education-tab">
+                        <div class="d-flex justify-content-end align-items-center m-3">
+                            <button class="btn btn-success" data-toggle="modal" data-target="#addEducationModal">
+                                <i class="las la-plus me-2"></i>Add
+                            </button>
+                        </div>
+                        <table class="table table-bordered" id="education-table">
+                            <thead>
+                                <tr>
+                                    <th>Institution Name</th>
+                                    <th>Degree</th>
+                                    <th>Field of Study</th>
+                                    <th>Education Level</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Grade</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="education-tbody">
+                                <!-- Education records will be loaded here via JavaScript -->
+                            </tbody>
+                        </table>
+                        <div class="text-center text-muted" id="no-education-message" style="display: none;">
+                            No education information found.
+                        </div>
+                        <div class="pagination" id="education-pagination" style="display: none;">
+                            <button id="prev-education" class="btn btn-secondary" disabled>
+                                <i class="las la-chevron-left"></i> Previous
+                            </button>
+                            <span>Page <span id="current-page-display-education">1</span> of <span id="total-pages-display-education">1</span></span>
+                            <button id="next-education" class="btn btn-secondary" disabled>
+                                Next <i class="las la-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+            </div>
+        </div>
+        
+    </div>
+
+</div>
+
+<!-- MODALS SECTION  -->
 <!-- Add Soft Skill Modal -->
 <div class="modal fade" id="addSoftSkillModal" tabindex="-1" role="dialog" aria-labelledby="addSoftSkillModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -442,132 +568,8 @@
         </div>
     </div>
 </div>
-
-
-<!-- CERTIFICATION AND WORK EXPERIENCE TABS -->
-
-<div class="profile-bio-container">
-    <div class="profile-bio-wrapper">
-        <div class="container">
-            <!-- Nav Tabs -->
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="certifications-tab" data-toggle="tab" href="#certifications" role="tab" aria-controls="certifications" aria-selected="true">Certifications</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="work-experience-tab" data-toggle="tab" href="#work-experience" role="tab" aria-controls="work-experience" aria-selected="false">Work Experience</a>
-                </li>
-            </ul>
-            
-            <!-- Tab Panes -->
-            <div class="tab-content" id="myTabContent">
-                <!-- Certifications Tab -->
-                <div class="tab-pane fade show active" id="certifications" role="tabpanel" aria-labelledby="certifications-tab">
-                    <div class="d-flex justify-content-end align-items-center m-3">
-                        <button class="btn btn-success" data-toggle="modal" data-target="#addCertificationModal">
-                            <i class="las la-plus me-2"></i>Add 
-                        </button>
-                    </div>
-                    <table class="table table-bordered" id="certifications-table">
-                        <thead>
-                            <tr>
-                                <th>Certification Name</th>
-                                <th>Date Awarded</th>
-                                <th>Description</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="certifications-table-body">
-                            <!-- Dynamic content will be loaded here -->
-                        </tbody>
-                    </table>
-                    {% if certifications %}
-                        <div class="pagination">
-                            <button id="prev-certifications" class="btn btn-secondary">
-                                <i class="las la-chevron-left"></i> Previous
-                            </button>
-                            <span>Page <span class="page-number" id="current-page-display-certifications">1</span> of <span class="page-number" id="total-pages-display-certifications">1</span></span>
-                            <button id="next-certifications" class="btn btn-secondary">
-                                Next <i class="las la-chevron-right"></i>
-                            </button>
-                        </div>
-                    {% endif %}
-                </div>
-
-                <!-- Certifications Tab -->
-<div class="tab-pane fade" id="certifications" role="tabpanel" aria-labelledby="certifications-tab">
-    <div class="d-flex justify-content-end align-items-center m-3">
-        <button class="btn btn-success" data-toggle="modal" data-target="#addCertificationModal">
-            <i class="las la-plus me-2"></i>Add
-        </button>
-    </div>
-    <table class="table table-bordered" id="certifications-table">
-        <thead>
-            <tr>
-                <th>Certification</th>
-                <th>Date Awarded</th>
-                <th>Description</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Content dynamically filled by JavaScript -->
-        </tbody>
-    </table>
-    <div class="pagination">
-        <button id="prev-certifications" class="btn btn-secondary">
-            <i class="las la-chevron-left"></i> Previous
-        </button>
-        <span>Page <span class="page-number" id="current-page-display-certifications">1</span> of <span class="page-number" id="total-pages-display-certifications">1</span></span>
-        <button id="next-certifications" class="btn btn-secondary">
-            Next <i class="las la-chevron-right"></i>
-        </button>
-    </div>
-</div>
-
-    
-                <!-- Work Experience Tab -->
-                <div class="tab-pane fade" id="work-experience" role="tabpanel" aria-labelledby="work-experience-tab">
-                    <div class="d-flex justify-content-end align-items-center m-3">
-                        <button class="btn btn-success" data-toggle="modal" data-target="#addWorkExperienceModal">
-                            <i class="las la-plus me-2"></i>Add 
-                        </button>
-                    </div>
-                    <table class="table table-bordered" id="work-experience-table">
-                        <thead>
-                            <tr>
-                                <th>Company Name</th>
-                                <th>Job Title</th>
-                                <th>From Date</th>
-                                <th>To Date</th>
-                                <th>Description</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="work-experience-table-body">
-                            <!-- Dynamic content will be loaded here -->
-                        </tbody>
-                    </table>
-                    {% if work_experiences %}
-                        <div class="pagination">
-                            <button id="prev-work-experience" class="btn btn-secondary">
-                                <i class="las la-chevron-left"></i> Previous
-                            </button>
-                            <span>Page <span class="page-number" id="current-page-display-work-experience">1</span> of <span class="page-number" id="total-pages-display-work-experience">1</span></span>
-                            <button id="next-work-experience" class="btn btn-secondary">
-                                Next <i class="las la-chevron-right"></i>
-                            </button>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- Edit Work Experience Modal -->
-<div class="modal fade" id="editWorkExperienceModal" tabindex="-1" aria-labelledby="editWorkExperienceModalLabel" aria-hidden="true">
+  <!-- Edit Work Experience Modal -->
+  <div class="modal fade" id="editWorkExperienceModal" tabindex="-1" aria-labelledby="editWorkExperienceModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -707,8 +709,117 @@
     </div>
 </div>
 
+<!-- Add Education Modal -->
+<div class="modal fade" id="addEducationModal" tabindex="-1" aria-labelledby="addEducationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-success" id="addEducationModalLabel">Add Education</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addEducationForm" action="/candidate/add-education" method="post">
+                    <div class="mb-1">
+                        <label for="add_institution_name" class="form-label text-primary">Institution Name:</label>
+                        <input type="text" class="form-control" id="add_institution_name" name="institution_name" required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="add_degree" class="form-label text-primary">Degree:</label>
+                        <input type="text" class="form-control" id="add_degree" name="degree" required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="add_field_of_study" class="form-label text-primary">Field of Study:</label>
+                        <input type="text" class="form-control" id="add_field_of_study" name="field_of_study" required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="add_education_level" class="form-label text-primary">Education Level:</label>
+                        <select class="form-control" id="add_education_level" name="education_level" required>
+                            <option value="" disabled selected>Select Education Level</option>
+                            <option value="High School">High School</option>
+                            <option value="Associate's Degree">Associate's Degree</option>
+                            <option value="Bachelor's Degree">Bachelor's Degree</option>
+                            <option value="Master's Degree">Master's Degree</option>
+                            <option value="Doctorate">Doctorate</option>
+                        </select>
+                    </div>
+                    <div class="mb-1">
+                        <label for="add_start_date" class="form-label text-primary">Start Date:</label>
+                        <input type="date" class="form-control" id="add_start_date" name="start_date" required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="add_end_date" class="form-label text-primary">End Date:</label>
+                        <input type="date" class="form-control" id="add_end_date" name="end_date" required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="add_grade" class="form-label text-primary">Grade:</label>
+                        <input type="text" class="form-control" id="add_grade" name="grade" required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="add_description" class="form-label text-primary">Description:</label>
+                        <textarea class="form-control" id="add_description" name="description" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Education</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Education Modal -->
+<div class="modal fade" id="editEducationModal" tabindex="-1" aria-labelledby="editEducationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-success" id="editEducationModalLabel">Edit Education</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editEducationForm" action="/candidate/update-education" method="post">
+                    <input type="hidden" id="edit_education_id" name="id">
+                    <div class="mb-1">
+                        <label for="edit_institution_name" class="form-label text-primary">Institution Name:</label>
+                        <input type="text" class="form-control" id="edit_institution_name" name="institution_name" required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="edit_degree" class="form-label text-primary">Degree:</label>
+                        <input type="text" class="form-control" id="edit_degree" name="degree" required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="edit_field_of_study" class="form-label text-primary">Field of Study:</label>
+                        <input type="text" class="form-control" id="edit_field_of_study" name="field_of_study" required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="edit_education_level" class="form-label text-primary">Education Level:</label>
+                        <input type="text" class="form-control" id="edit_education_level" name="education_level" required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="edit_start_date" class="form-label text-primary">Start Date:</label>
+                        <input type="date" class="form-control" id="edit_start_date" name="start_date" required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="edit_end_date" class="form-label text-primary">End Date:</label>
+                        <input type="date" class="form-control" id="edit_end_date" name="end_date" required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="edit_grade" class="form-label text-primary">Grade:</label>
+                        <input type="text" class="form-control" id="edit_grade" name="grade">
+                    </div>
+                    <div class="mb-1">
+                        <label for="edit_description" class="form-label text-primary">Description:</label>
+                        <textarea class="form-control" id="edit_description" name="description" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 </div>
+
 <script>
     
 </script>
@@ -721,8 +832,34 @@
  <!-- PAGANATIONS -->
  <script src="../../../static/js/candidateprofilepagantion.js"></script>
  <script src="../../../static/js/candidate-work.js"></script>
+ <script src="../../../static/js/candidate_technicalskills.js"></script>
+ <script src="../../../static/js/candidate_softskills.js"></script>
+ <script src="../../../static/js/candidate_languages.js"></script>
+ <script src="../../../static/js/candidate_education.js"></script>
+
+
+
+
+
 
 <script>
+
+
+// ============================================================================================ 
+
+function editEducation(id, institution_name, degree, field_of_study, education_level, start_date, end_date, grade, description) {
+    document.getElementById('edit_education_id').value = id;
+    document.getElementById('edit_institution_name').value = institution_name;
+    document.getElementById('edit_degree').value = degree;
+    document.getElementById('edit_field_of_study').value = field_of_study;
+    document.getElementById('edit_education_level').value = education_level;
+    document.getElementById('edit_start_date').value = start_date;
+    document.getElementById('edit_end_date').value = end_date;
+    document.getElementById('edit_grade').value = grade;
+    document.getElementById('edit_description').value = description;
+    $('#editEducationModal').modal('show');
+}
+
  
     function editCertification(id, certification_name,date_awarded,description) {
         document.getElementById('edit_certification_id').value = id;
@@ -741,6 +878,8 @@
     document.getElementById('edit_to_date').value = to_date;
     document.getElementById('edit_description').value = description;
     $('#editWorkExperienceModal').modal('show');
+
+
 }
 
 document.querySelectorAll('.delete-skill, .delete-softskill, .delete-language', ).forEach(button => {

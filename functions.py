@@ -456,6 +456,11 @@ def fetch_additional_info(cursor, candidate_id):
     cursor.execute(sql2, (candidate_id,))
     certifications = cursor.fetchall()
 
+    # Fetch education information
+    sql3 = 'SELECT * FROM candidate_education WHERE candidate_id=%s'
+    cursor.execute(sql3, (candidate_id,))
+    educations = cursor.fetchall()
+
     return {
         'candidate_pro': candidate_pro,
         'technical_skills': technical_skills,
@@ -465,5 +470,6 @@ def fetch_additional_info(cursor, candidate_id):
         'unselected_soft_skills': unselected_soft_skills,
         'unselected_languages': unselected_languages,
         'work_experiences': work_experiences,
-        'certifications': certifications
+        'certifications': certifications,
+        'educations':educations
     }
