@@ -954,15 +954,6 @@ function editEducation(id, institution_name, degree, field_of_study, education_l
 
 }
 
-// ======================================================================================================= 
-
-document.querySelectorAll('.delete-skill, .delete-softskill, .delete-language', ).forEach(button => {
-    button.addEventListener('click', function(event) {
-        if (!confirm('Are you sure you want to delete this item?')) {
-            event.preventDefault();
-        }
-    });
-});
 
 // ============================================================================================================= 
 
