@@ -1,4 +1,4 @@
-<tr data-id="{{ certification.id }}">
+<!-- <tr data-id="{{ certification.id }}">
   <td>{{ certification.certification_name }}</td>
   <td>{{ certification.date_awarded }}</td>
   <td>{{ certification.description }}</td>
@@ -20,4 +20,38 @@
       <button class="btn btn-danger btn-sm" type="submit"><i class="las la-trash" data-bs-toggle="tooltip" title="Delete certification" ></i></button>
     </form>
   </td>
+</tr> -->
+
+<tr data-id="{{ certification.id }}">
+  <td>{{ certification.certification_name }}</td>
+  <td>{{ certification.issuing_organization }}</td>
+  <td>{{ certification.issue_date }}</td>
+  <td>{{ certification.expiry_date }}</td>
+  <td>{{ certification.certification_number }}</td>
+  <td>{{ certification.description }}</td>
+  <td>
+    <!-- Edit Button -->
+    <a
+      href="#"
+      class="btn btn-primary btn-sm"
+      data-toggle="modal"
+      data-target="#editCertificationModal"
+      onclick="editCertification('{{ certification.id }}', '{{ certification.certification_name }}', '{{ certification.issuing_organization }}', '{{ certification.issue_date }}', '{{ certification.expiry_date }}', '{{ certification.certification_number }}', '{{ certification.description }}')"
+    >
+      <i class="las la-edit" data-bs-toggle="tooltip" title="Edit certification"></i>
+    </a>
+
+    <!-- Delete Button -->
+    <form
+      method="POST"
+      action="/candidate/delete-certification/{{ certification.id }}"
+      style="display: inline"
+      onsubmit="return confirm('Are you sure you want to delete this certification?');"
+    >
+      <button class="btn btn-danger btn-sm" type="submit">
+        <i class="las la-trash" data-bs-toggle="tooltip" title="Delete certification"></i>
+      </button>
+    </form>
+  </td>
 </tr>
+

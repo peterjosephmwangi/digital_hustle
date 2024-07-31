@@ -18,9 +18,10 @@
       method="POST"
       action="/candidate/delete-work-experience/{{ experience.id }}"
       style="display: inline"
+      onsubmit="return confirm('Are you sure you want to delete this work-experience?');"
     >
       <button
-        class="btn btn-danger btn-sm delete-work-experience"
+        class="btn btn-danger btn-sm delete-work-experience "
         type="submit"
       >
       <i class="las la-trash"></i>

@@ -27,7 +27,12 @@
     >
       <i class="las la-edit "></i>
     </a>
-    <form method="POST" action="/candidate/delete-education/{{ education.id }}" style="display: inline">
+    <form 
+    method="POST"
+     action="/candidate/delete-education/{{ education.id }}"
+      style="display: inline"
+      onsubmit="return confirm('Are you sure you want to delete this education?');"
+      >
       <button class="btn btn-danger btn-sm delete-education" type="submit"><i class="las la-trash"></i></button>
     </form>
   </td>

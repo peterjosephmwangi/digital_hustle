@@ -5,6 +5,7 @@
       method="POST"
       action="/candidate/delete-language/{{ language.id }}"
       style="display: inline"
+      onsubmit="return confirm('Are you sure you want to delete this languages?');"
     >
       <button class="btn btn-danger btn-sm delete-language" type="submit">
         Delete

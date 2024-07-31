@@ -5,6 +5,7 @@
       method="POST"
       action="/candidate/delete-skill/{{ skill.id }}"
       style="display: inline"
+      onsubmit="return confirm('Are you sure you want to delete this skills?');"
     >
       <button class="btn btn-danger btn-sm delete-skill" type="submit">
         DELETE
