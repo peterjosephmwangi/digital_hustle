@@ -12,7 +12,7 @@
       data-target="#editWorkExperienceModal"
       onclick="editWorkExperience('{{ experience.id }}', '{{ experience.company_name }}', '{{ experience.job_title }}', '{{ experience.from_date }}', '{{ experience.to_date }}', '{{ experience.description }}')"
     >
-      <i class="las la-edit me-2"></i>Edit
+      <i class="las la-edit"></i>
     </a>
     <form
       method="POST"
@@ -23,7 +23,7 @@
         class="btn btn-danger btn-sm delete-work-experience"
         type="submit"
       >
-        DELETE
+      <i class="las la-trash"></i>
       </button>
     </form>
   </td>

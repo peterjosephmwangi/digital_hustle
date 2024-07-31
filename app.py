@@ -1242,6 +1242,7 @@ def get_certifications():
         'total': total_certifications,
         'totalPages': total_pages
     })
+
  
 
 

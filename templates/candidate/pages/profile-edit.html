@@ -63,6 +63,47 @@
             background-color: #d4edda;
             color: #155724;
         }
+
+        /* styles for candidate tables  */
+        .candidate-profile-table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        .candidate-profile-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .candidate-profile-table th,
+        .candidate-profile-table td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 2px solid #ddd;
+            vertical-align: top;
+        }
+
+        .candidate-profile-table th {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: blue;
+        }
+
+        .candidate-profile-table td {
+            font-size: 0.8rem;
+            color: var(--gray-1);
+        }
+
+        .inner-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .inner-table td {
+            border: 1px solid #ddd;
+            padding: 4px;
+            text-align: left;
+        }
 </style>
 <div class="page-own-content">
     <div class="page-row">
@@ -366,19 +407,24 @@
                                 <i class="las la-plus me-2"></i>Add 
                             </button>
                         </div>
-                        <table class="table table-bordered" id="certifications-table">
-                            <thead>
-                                <tr>
-                                    <th>Certification Name</th>
-                                    <th>Date Awarded</th>
-                                    <th>Description</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="certifications-table-body">
-                                <!-- Dynamic content will be loaded here -->
-                            </tbody>
-                        </table>
+                        {% if certifications %}
+                            <table class="table table-bordered candidate-profile-table" id="certifications-table">
+                                <thead>
+                                    <tr>
+                                        <th>Certification Name</th>
+                                        <th>Date Awarded</th>
+                                        <th>Description</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="certifications-table-body" class="inner-table">
+                                    <!-- Dynamic content will be loaded here -->
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p style="text-align: center;">No certifications available.</p>
+                         {% endif %}
+                    
                         {% if certifications %}
                             <div class="pagination">
                                 <button id="prev-certifications" class="btn btn-secondary">
@@ -398,7 +444,7 @@
                                 <i class="las la-plus me-2"></i>Add
                             </button>
                         </div>
-                        <table class="table table-bordered" id="work-experience-table">
+                        <table class="table table-bordered candidate-profile-table" id="work-experience-table">
                             <thead>
                                 <tr>
                                     <th>Company Name</th>
@@ -409,7 +455,7 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="work-experience-tbody">
+                            <tbody id="work-experience-tbody"  class="inner-table">
                                 <!-- Work experiences will be loaded here via JavaScript -->
                             </tbody>
                         </table>
@@ -434,7 +480,7 @@
                                 <i class="las la-plus me-2"></i>Add
                             </button>
                         </div>
-                        <table class="table table-bordered" id="education-table">
+                        <table class="table table-bordered candidate-profile-table" id="education-table">
                             <thead>
                                 <tr>
                                     <th>Institution Name</th>
@@ -448,7 +494,7 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="education-tbody">
+                            <tbody id="education-tbody"  class="inner-table">
                                 <!-- Education records will be loaded here via JavaScript -->
                             </tbody>
                         </table>
@@ -844,22 +890,43 @@
 
 <script>
 
+function editEducation(id, institution_name, degree, field_of_study, education_level, start_date, end_date, grade, description) {
+    console.log({
+        id, institution_name, degree, field_of_study, education_level,
+        start_date, end_date, grade, description
+    });
+
+    // Proceed with setting form values
+    // ...
+}
+
+
 
 // ============================================================================================ 
 
 function editEducation(id, institution_name, degree, field_of_study, education_level, start_date, end_date, grade, description) {
+    // Decode HTML entities
+    const decodeHTML = (str) => {
+        const txt = document.createElement('textarea');
+        txt.innerHTML = str;
+        return txt.value;
+    };
+
     document.getElementById('edit_education_id').value = id;
-    document.getElementById('edit_institution_name').value = institution_name;
-    document.getElementById('edit_degree').value = degree;
-    document.getElementById('edit_field_of_study').value = field_of_study;
-    document.getElementById('edit_education_level').value = education_level;
+    document.getElementById('edit_institution_name').value = decodeHTML(institution_name);
+    document.getElementById('edit_degree').value = decodeHTML(degree);
+    document.getElementById('edit_field_of_study').value = decodeHTML(field_of_study);
+    document.getElementById('edit_education_level').value = decodeHTML(education_level);
     document.getElementById('edit_start_date').value = start_date;
     document.getElementById('edit_end_date').value = end_date;
-    document.getElementById('edit_grade').value = grade;
-    document.getElementById('edit_description').value = description;
+    document.getElementById('edit_grade').value = decodeHTML(grade);
+    document.getElementById('edit_description').value = decodeHTML(description);
+
     $('#editEducationModal').modal('show');
 }
 
+
+// ================================================================================================ 
  
     function editCertification(id, certification_name,date_awarded,description) {
         document.getElementById('edit_certification_id').value = id;
@@ -869,6 +936,8 @@ function editEducation(id, institution_name, degree, field_of_study, education_l
         $('#editCertificationModal').modal('show');
         
     }
+
+// =================================================================================================== 
 
     function editWorkExperience(id, company_name, job_title, from_date, to_date, description) {
     document.getElementById('edit_work_experience_id').value = id;
@@ -882,6 +951,8 @@ function editEducation(id, institution_name, degree, field_of_study, education_l
 
 }
 
+// ======================================================================================================= 
+
 document.querySelectorAll('.delete-skill, .delete-softskill, .delete-language', ).forEach(button => {
     button.addEventListener('click', function(event) {
         if (!confirm('Are you sure you want to delete this item?')) {
@@ -890,6 +961,7 @@ document.querySelectorAll('.delete-skill, .delete-softskill, .delete-language', 
     });
 });
 
+// ============================================================================================================= 
 
 
 $(document).ready(function() {

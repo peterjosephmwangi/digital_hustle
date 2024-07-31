@@ -2,7 +2,7 @@
   <td>{{ education.institution_name }}</td>
   <td>{{ education.degree }}</td>
   <td>{{ education.field_of_study }}</td>
-  <td>{{ education.education_level }}</td>
+  <td>{{ education.education_level | escape }}</td>
   <td>{{ education.start_date }}</td>
   <td>{{ education.end_date }}</td>
   <td>{{ education.grade }}</td>
@@ -13,18 +13,22 @@
       class="btn btn-primary btn-sm"
       data-toggle="modal"
       data-target="#editEducationModal"
-      onclick="editEducation('{{ education.id }}', '{{ education.institution_name }}', '{{ education.degree }}', '{{ education.field_of_study }}', '{{ education.education_level }}', '{{ education.start_date }}', '{{ education.end_date }}', '{{ education.grade }}', '{{ education.description }}')"
+      onclick="editEducation(
+          '{{ education.id }}', 
+          '{{ education.institution_name | escape }}', 
+          '{{ education.degree | escape }}', 
+          '{{ education.field_of_study | escape }}', 
+          '{{ education.education_level | escape }}', 
+          '{{ education.start_date }}', 
+          '{{ education.end_date }}', 
+          '{{ education.grade | escape }}', 
+          '{{ education.description | escape }}'
+        )"
     >
-      <i class="las la-edit me-2"></i>Edit
+      <i class="las la-edit "></i>
     </a>
-    <form
-      method="POST"
-      action="/candidate/delete-education/{{ education.id }}"
-      style="display: inline"
-    >
-      <button class="btn btn-danger btn-sm delete-education" type="submit">
-        DELETE
-      </button>
+    <form method="POST" action="/candidate/delete-education/{{ education.id }}" style="display: inline">
+      <button class="btn btn-danger btn-sm delete-education" type="submit"><i class="las la-trash"></i></button>
     </form>
   </td>
 </tr>
